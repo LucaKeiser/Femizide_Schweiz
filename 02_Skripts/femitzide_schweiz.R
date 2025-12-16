@@ -123,14 +123,20 @@ for(year_search in unique(df$year)) {
                          midpoint = 3,
                          na.value = "#ffe4e0") + 
     labs(title = paste0(year_search, " - Anzahl Femizide: ", n_total[[1, 2]],  " | Anzahl Versuchte Femizide: ", n_total[[2, 2]]),
-         caption = "stopfemizid versucht, jede Tat zu dokumentieren. Dennoch ist diese Liste als unvollständig zu betrachten.\nDaten: https://www.stopfemizid.ch/ | Visualisierung: Luca Keiser") +
-    theme_void()
+         caption = "stopfemizid versucht, jede Tat zu dokumentieren. Dennoch sind die dargestellten Informationen als unvollständig zu betrachten.") +
+    theme_void() +
+    theme(
+      plot.caption = element_text(
+        size = 5,
+        face = "italic",
+        hjust = 1)
+    )
   
   
   ### 2. Karte erstellen
   p1_interactive <- girafe(ggobj = p1,
                            options = list(
-                             opts_hover(css = "fill: #990000"), 
+                             opts_hover(css = ""),
                              # opts_hover_inv(css = "fill: gray"),
                              opts_toolbar(saveaspng = FALSE),
                              opts_sizing(rescale = TRUE, width = 0.75),
@@ -139,7 +145,7 @@ for(year_search in unique(df$year)) {
   
   p1_interactive_shiny <- girafe(ggobj = p1,
                                  options = list(
-                                   opts_hover(css = "fill: #990000"), 
+                                   opts_hover(css = ""), 
                                    # opts_hover_inv(css = "fill: gray"),
                                    opts_toolbar(saveaspng = FALSE),
                                    opts_sizing(rescale = TRUE, width = 1),
