@@ -36,7 +36,7 @@ ui <- fluidPage(
         color: #000000;
       }
       .impressum-text {
-      font-size: 2rem;  
+      font-size: 3rem;  
       }
       .impressum-text a {
       color: #eba4a4; 
@@ -73,26 +73,23 @@ ui <- fluidPage(
               tags$br(),
               tags$br(),
               tags$br(),
+              tags$hr(),
               tags$p(
                 class = "impressum-text",
                 "Recherche und Dokumentation der Daten:",
                 tags$a(href = "https://www.stopfemizid.ch/",
                        "stopfemizid")
               ),
-              tags$br(),
+              tags$hr(),
               tags$p(
                 class = "impressum-text",
                 "Shiny-App (Visualisierung):",
                 tags$a(href = "https://www.linkedin.com/in/luca-keiser-806329285",
-                       "Luca Keiser")
-              ),
-              tags$br(),
-              tags$p(
-                class = "impressum-text",
-                "Code:",
+                       "Luca Keiser"),
+                " | ",
                 tags$a(href = "https://github.com/LucaKeiser/Femizide_Schweiz",
-                       "github")
-                
+                       "Code"),
+                tags$hr()
               )
             )
           )
