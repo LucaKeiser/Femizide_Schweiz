@@ -8,6 +8,7 @@ library(ggiraph)
 
 ### 1. Data
 year_files <- c(
+  "Overall"  = "01_Data/Femizide_Schweiz_Overall.rds",
   "2025" = "01_Data/Femizide_Schweiz_2025.rds",
   "2024" = "01_Data/Femizide_Schweiz_2024.rds",
   "2023" = "01_Data/Femizide_Schweiz_2023.rds",
@@ -58,7 +59,7 @@ ui <- fluidPage(
           girafeOutput(
             outputId = paste0("plot_", y),
             width    = "75%",
-            height   = "calc(100vw * 0.5)"   # * muss nicht escaped werden, weil es innerhalb eines Strings steht
+            height   = "calc(100vw * 0.5)"
           )
         )
       }),
