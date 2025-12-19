@@ -16,7 +16,7 @@ for(sheet in seq_along(sheets)) {
                                sheet = sheet) %>% 
     mutate(date = as.Date(date))
   assign(paste0("df_", sheets[sheet]), df_temp)
-
+  
 }
 
 df <- df_2025 %>% 
@@ -26,7 +26,7 @@ df <- df_2025 %>%
             df_2020)
 
 # Shape-File Schweiz
-shape_file <- read_sf("01_Data/Shapefile_Switzerland/swissBOUNDARIES3D_1_4_TLM_KANTONSGEBIET.shp")
+shape_file <- read_sf("01_Data/Shapefile_Switzerland/swissBOUNDARIES3D_1_5_TLM_KANTONSGEBIET.shp")
 shape_agg <- shape_file %>%
   group_by(NAME) %>%      
   summarise(geometry = st_union(geometry), 
@@ -34,6 +34,9 @@ shape_agg <- shape_file %>%
   group_by(NAME) %>% 
   rowid_to_column(var = "id_interactive_plot")
 
+# shape-files angleichen
+swiss_lakes <- ggswissmaps::shp_sf$g1s15
+sf::st_crs(swiss_lakes) <- sf::st_crs(swiss_lakes, 2056)
 
 ### Daten aufbereiten
 df <-  df %>% 
@@ -124,17 +127,22 @@ p1 <- shape_agg %>%
   left_join(df_shiny,
             by = c("NAME" = "canton_shapefile")) %>% 
   distinct() %>% 
-  ggplot(aes(tooltip = info_tooltipp, 
-             data_id = id_interactive_plot)) +
-  geom_sf_interactive(aes(fill = n_femizid),
-                      colour = NA,
+  ggplot() +
+  geom_sf_interactive(aes(tooltip = info_tooltipp, 
+                          data_id = id_interactive_plot,
+                          fill = n_femizid),
+                      colour = "#ffffff",
                       hover_css = "stroke:black;stroke-width:1px;",
-                      show.legend = FALSE) + 
+                      show.legend = FALSE,
+                      size = 0.05) + 
   scale_fill_gradient2(low = "#eba4a4",
                        mid = "#ec5353",
                        high =  "#d12e2e",
                        midpoint = 12,
-                       na.value = "#ffe4e0") + 
+                       na.value = "#eedada") + 
+  geom_sf(data = swiss_lakes,
+          fill = "#add8e6", 
+          colour = NA) + 
   labs(title = paste0("Overall - Anzahl Femizide: ", n_total$total_fem,  " | Anzahl Versuchte Femizide: ", n_total$totl_v_fem),
        caption = "stopfemizid versucht, jede Tat zu dokumentieren. Dennoch sind die dargestellten Informationen als unvollständig zu betrachten.") +
   theme_void() +
@@ -209,17 +217,22 @@ for(year_search in unique(df$year)) {
     left_join(df_shiny,
               by = c("NAME" = "canton_shapefile")) %>% 
     distinct() %>% 
-    ggplot(aes(tooltip = info_tooltipp, 
-               data_id = id_interactive_plot)) +
-    geom_sf_interactive(aes(fill = n_femizid),
-                        colour = NA,
+    ggplot() +
+    geom_sf_interactive(aes(fill = n_femizid,
+                            tooltip = info_tooltipp, 
+                            data_id = id_interactive_plot),
+                        colour = "#ffffff",
                         hover_css = "stroke:black;stroke-width:1px;",
-                        show.legend = FALSE) + 
+                        show.legend = FALSE,
+                        size = 0.05) + 
     scale_fill_gradient2(low = "#eba4a4",
                          mid = "#ec5353",
                          high =  "#d12e2e",
                          midpoint = 3,
-                         na.value = "#ffe4e0") + 
+                         na.value = "#eedada") + 
+    geom_sf(data = swiss_lakes,
+            fill = "#add8e6", 
+            colour = NA) + 
     labs(title = paste0(year_search, " - Anzahl Femizide: ", n_total[[1, 2]],  " | Anzahl Versuchte Femizide: ", n_total[[2, 2]]),
          caption = "stopfemizid versucht, jede Tat zu dokumentieren. Dennoch sind die dargestellten Informationen als unvollständig zu betrachten.") +
     theme_void() +
