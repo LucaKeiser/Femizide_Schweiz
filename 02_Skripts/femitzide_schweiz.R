@@ -30,7 +30,9 @@ shape_file <- read_sf("01_Data/Shapefile_Switzerland/swissBOUNDARIES3D_1_4_TLM_K
 shape_agg <- shape_file %>%
   group_by(NAME) %>%      
   summarise(geometry = st_union(geometry), 
-            .groups = "drop")
+            .groups = "drop") %>% 
+  group_by(NAME) %>% 
+  rowid_to_column(var = "id_interactive_plot")
 
 
 ### Daten aufbereiten
@@ -123,10 +125,10 @@ p1 <- shape_agg %>%
             by = c("NAME" = "canton_shapefile")) %>% 
   distinct() %>% 
   ggplot(aes(tooltip = info_tooltipp, 
-             data_id = info_tooltipp)) +
+             data_id = id_interactive_plot)) +
   geom_sf_interactive(aes(fill = n_femizid),
-                      color = "grey",
-                      hover_nearest = TRUE,
+                      colour = NA,
+                      hover_css = "stroke:black;stroke-width:1px;",
                       show.legend = FALSE) + 
   scale_fill_gradient2(low = "#eba4a4",
                        mid = "#ec5353",
@@ -208,10 +210,10 @@ for(year_search in unique(df$year)) {
               by = c("NAME" = "canton_shapefile")) %>% 
     distinct() %>% 
     ggplot(aes(tooltip = info_tooltipp, 
-               data_id = rowid)) +
+               data_id = id_interactive_plot)) +
     geom_sf_interactive(aes(fill = n_femizid),
-                        color = "grey",
-                        hover_nearest = TRUE,
+                        colour = NA,
+                        hover_css = "stroke:black;stroke-width:1px;",
                         show.legend = FALSE) + 
     scale_fill_gradient2(low = "#eba4a4",
                          mid = "#ec5353",
