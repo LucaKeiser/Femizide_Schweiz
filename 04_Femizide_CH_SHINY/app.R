@@ -21,6 +21,10 @@ plots_by_year <- map(year_files, ~ read_rds(.x))
 ui <- fluidPage(
   
   ### 1. Styling
+  tags$head(
+    tags$title("Femizide Schweiz")
+  ),
+  
   tags$style(HTML("
       .nav-tabs > li > a {
         background-color: #fbeaea;
@@ -64,7 +68,11 @@ ui <- fluidPage(
     ")
   ),
   
-  titlePanel("(Versuchte) Femizide in der Schweiz"), br(), br(),
+  titlePanel(
+    strong(
+      "(Versuchte) Femizide in der Schweiz")
+  ), 
+  br(), br(),
   
   ### 2. Tabs
   # Maps
