@@ -9,6 +9,7 @@ library(htmlwidgets)
 
 
 # Daten laden und aufbereiten ---------------------------------------------
+### Daten stopfemizid.ch
 sheets <- c(2025:2022, 2020)
 for(sheet in seq_along(sheets)) { 
   
@@ -25,7 +26,7 @@ df <- df_2025 %>%
             df_2022,
             df_2020)
 
-# Shape-File Schweiz
+### Shape-Files Schweiz
 shape_file <- read_sf("01_Data/Shapefile_Switzerland/swissBOUNDARIES3D_1_5_TLM_KANTONSGEBIET.shp")
 shape_agg <- shape_file %>%
   group_by(NAME) %>%      
@@ -63,7 +64,7 @@ df <-  df %>%
          info, 
          n_femizid)
 
-# Info für Tooltipp erstellen
+### Info für Tooltipp erstellen
 df <- df %>% 
   arrange(date) %>% 
   mutate(date = format(date, "%d.%m.%Y")) %>% 
@@ -79,11 +80,7 @@ df <- df %>%
                                         "NA"))
 
 
-
-
-
 # Outputs erstellen -------------------------------------------------------
-
 ## Overall ----------------------------------------------------------------
 ### 1. Daten aufbereiten
 df_shiny <- df %>% 
@@ -153,7 +150,6 @@ p1 <- shape_agg %>%
       hjust = 1)
   )
 
-
 ### 2. interaktive Karte erstellen
 p1_interactive <- girafe(ggobj = p1,
                          options = list(
@@ -172,7 +168,6 @@ p1_interactive_shiny <- girafe(ggobj = p1,
                                  opts_sizing(rescale = TRUE, width = 1),
                                  opts_selection(type = "none")
                                ))
-
 
 ### 3. Speichern
 htmlwidgets::saveWidget(p1_interactive, 
@@ -243,7 +238,6 @@ for(year_search in unique(df$year)) {
         hjust = 1)
     )
   
-  
   ### 2. interaktive Karte erstellen
   p1_interactive <- girafe(ggobj = p1,
                            options = list(
@@ -263,12 +257,19 @@ for(year_search in unique(df$year)) {
                                    opts_selection(type = "none")
                                  ))
   
-  
   ### 3. Speichern
   htmlwidgets::saveWidget(p1_interactive, 
-                          paste0("03_Output/Femizide_Schweiz_", year_search, ".html"),
+                          paste0(
+                            "03_Output/Femizide_Schweiz_", 
+                            year_search, 
+                            ".html"
+                          ),
                           selfcontained = TRUE)
   write_rds(p1_interactive_shiny,
-            paste0("04_Femizide_CH_SHINY/01_Data/Femizide_Schweiz_", year_search, ".rds"))
+            paste0(
+              "04_Femizide_CH_SHINY/01_Data/Femizide_Schweiz_", 
+              year_search, 
+              ".rds")
+  )
   
 }

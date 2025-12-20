@@ -1,12 +1,11 @@
 
 # load packages and data --------------------------------------------------
-# Pakete laden
 library(tidyverse)
 library(shiny)
 library(htmlwidgets)
 library(ggiraph)
 
-### 1. Data
+# Data
 year_files <- c(
   "Overall"  = "01_Data/Femizide_Schweiz_Overall.rds",
   "2025" = "01_Data/Femizide_Schweiz_2025.rds",
@@ -18,9 +17,10 @@ year_files <- c(
 plots_by_year <- map(year_files, ~ read_rds(.x))
 
 
-### 2. Define UI for application that draws a histogram
+# Define UI ---------------------------------------------------------------
 ui <- fluidPage(
   
+  ### 1. Styling
   tags$style(HTML("
       .nav-tabs > li > a {
         background-color: #fbeaea;
@@ -46,10 +46,28 @@ ui <- fluidPage(
     
     ")),
   
+  # Info box
+  tags$div(
+    class = "alert alert-info alert-dismissible", 
+    style = "margin-top: 20px;",
+    tags$button(
+      type = "button",
+      class = "close",
+      `data-dismiss` = "alert",
+      `aria-label` = "Close",
+      tags$span(`aria-hidden` = "true", HTML("&times;"))
+    ),
+    strong("Hinweis zum Gebrauch mit dem Smartphone:"),   
+    HTML("
+        <li>Bitte Querformat verwenden.</li>
+        <li>Damit die zusätzlichen Informationen auf Kantonsebene sichtbar werden, etwas länger auf den entsprechenden Kanton drücken.</li>
+    ")
+  ),
   
   titlePanel("(Versuchte) Femizide in der Schweiz"), br(), br(),
   
-  # Graphs
+  ### 2. Tabs
+  # Maps
   do.call(
     tabsetPanel,
     c(list(id = "year_tab"),
@@ -71,9 +89,7 @@ ui <- fluidPage(
           fluidRow(
             column(
               width = 12,
-              tags$br(),
-              tags$br(),
-              tags$br(),
+              tags$br(), tags$br(), tags$br(), 
               tags$hr(),
               tags$p(
                 class = "impressum-text",
@@ -100,9 +116,9 @@ ui <- fluidPage(
   )
 )
 
-### 3. Define server logic
+
+# Server logic ------------------------------------------------------------
 server <- function(input, output, session) {
-  
   walk2(
     .x = names(plots_by_year),
     .y = plots_by_year,
@@ -114,5 +130,6 @@ server <- function(input, output, session) {
   )
 }
 
-### 4. Run the application 
+
+# Run app -----------------------------------------------------------------
 shinyApp(ui = ui, server = server)
