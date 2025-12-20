@@ -58,9 +58,9 @@ ui <- fluidPage(
       tags$span(`aria-hidden` = "true", HTML("&times;"))
     ),
     strong("Hinweis zum Gebrauch mit dem Smartphone:"),   
-    HTML("
-        <li>Bitte Querformat verwenden.</li>
-        <li>Damit die zusätzlichen Informationen auf Kantonsebene sichtbar werden, etwas länger auf den entsprechenden Kanton drücken.</li>
+    HTML("<br>
+        - Bitte Querformat verwenden.<br>
+        - Damit die zusätzlichen Informationen auf Kantonsebene sichtbar werden, etwas länger auf den Kanton drücken.
     ")
   ),
   
