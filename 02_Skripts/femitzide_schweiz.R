@@ -160,10 +160,11 @@ p1_interactive <- girafe(ggobj = p1,
                            opts_toolbar(saveaspng = FALSE),
                            opts_sizing(rescale = TRUE, width = 1),
                            opts_selection(type = "single",
-                                          only_shiny = FALSE,
+                                          only_shiny = TRUE,
                                           css = ""),
                            opts_tooltip(delay_mouseover = 0,
-                                        delay_mouseout  = 4000)
+                                        delay_mouseout  = 5000,
+                                        use_cursor_pos  = TRUE)
                          ))
 
 p1_interactive_shiny <- girafe(ggobj = p1,
@@ -173,10 +174,11 @@ p1_interactive_shiny <- girafe(ggobj = p1,
                                  opts_toolbar(saveaspng = FALSE),
                                  opts_sizing(rescale = TRUE, width = 1),
                                  opts_selection(type = "single",
-                                                only_shiny = FALSE,
+                                                only_shiny = TRUE,
                                                 css = ""),
                                  opts_tooltip(delay_mouseover = 0,
-                                              delay_mouseout  = 4000)
+                                              delay_mouseout  = 5000,
+                                              use_cursor_pos  = TRUE)
                                ))
 
 ### 3. Speichern
@@ -255,10 +257,11 @@ for(year_search in unique(df$year)) {
                              opts_toolbar(saveaspng = FALSE),
                              opts_sizing(rescale = TRUE, width = 1),
                              opts_selection(type = "single",
-                                            only_shiny = FALSE,
+                                            only_shiny = TRUE,
                                             css = ""),
                              opts_tooltip(delay_mouseover = 0,
-                                          delay_mouseout  = 4000)
+                                          delay_mouseout  = 5000,
+                                          use_cursor_pos  = TRUE)
                            ))
   
   p1_interactive_shiny <- girafe(ggobj = p1,
@@ -268,10 +271,11 @@ for(year_search in unique(df$year)) {
                                    opts_toolbar(saveaspng = FALSE),
                                    opts_sizing(rescale = TRUE, width = 1),
                                    opts_selection(type = "single",
-                                                  only_shiny = FALSE,
+                                                  only_shiny = TRUE,
                                                   css = ""),
                                    opts_tooltip(delay_mouseover = 0,
-                                                delay_mouseout  = 4000)
+                                                delay_mouseout  = 5000,
+                                                use_cursor_pos  = TRUE)
                                  ))
   
   ### 3. Speichern
@@ -296,4 +300,3 @@ for(year_search in unique(df$year)) {
 # Für das Jahr 2021 sind keine Daten verfügbar.
 write_rds(tibble(),
           "04_Femizide_CH_SHINY/01_Data/Femizide_Schweiz_DUMMY.rds")
-
