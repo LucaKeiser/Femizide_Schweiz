@@ -129,7 +129,6 @@ p1 <- shape_agg %>%
                           data_id = id_interactive_plot,
                           fill = n_femizid),
                       colour = "#ffffff",
-                      hover_css = "stroke:black;stroke-width:1px;",
                       show.legend = FALSE,
                       size = 0.05) + 
   scale_fill_gradient2(low = "#eba4a4",
@@ -153,20 +152,28 @@ p1 <- shape_agg %>%
 ### 2. interaktive Karte erstellen
 p1_interactive <- girafe(ggobj = p1,
                          options = list(
-                           opts_hover(css = ""),
-                           # opts_hover_inv(css = "fill: gray"),
+                           opts_hover(css = "fill:#D8BFD8"),
+                           opts_hover_inv(css = ""),
                            opts_toolbar(saveaspng = FALSE),
-                           opts_sizing(rescale = TRUE, width = 0.75),
-                           opts_selection(type = "none")
+                           opts_sizing(rescale = TRUE, width = 1),
+                           opts_selection(type = "single",
+                                          only_shiny = FALSE,
+                                          css = ""),
+                           opts_tooltip(delay_mouseover = 0,
+                                        delay_mouseout  = 5000)
                          ))
 
 p1_interactive_shiny <- girafe(ggobj = p1,
                                options = list(
-                                 opts_hover(css = ""), 
-                                 # opts_hover_inv(css = "fill: gray"),
+                                 opts_hover(css = "fill:#D8BFD8"),
+                                 opts_hover_inv(css = ""),
                                  opts_toolbar(saveaspng = FALSE),
                                  opts_sizing(rescale = TRUE, width = 1),
-                                 opts_selection(type = "none")
+                                 opts_selection(type = "single",
+                                                only_shiny = FALSE,
+                                                css = ""),
+                                 opts_tooltip(delay_mouseover = 0,
+                                              delay_mouseout  = 5000)
                                ))
 
 ### 3. Speichern
@@ -217,7 +224,6 @@ for(year_search in unique(df$year)) {
                             tooltip = info_tooltipp, 
                             data_id = id_interactive_plot),
                         colour = "#ffffff",
-                        hover_css = "stroke:black;stroke-width:1px;",
                         show.legend = FALSE,
                         size = 0.05) + 
     scale_fill_gradient2(low = "#eba4a4",
@@ -241,20 +247,28 @@ for(year_search in unique(df$year)) {
   ### 2. interaktive Karte erstellen
   p1_interactive <- girafe(ggobj = p1,
                            options = list(
-                             opts_hover(css = ""),
-                             # opts_hover_inv(css = "fill: gray"),
+                             opts_hover(css = "fill:#D8BFD8"),
+                             opts_hover_inv(css = ""),
                              opts_toolbar(saveaspng = FALSE),
-                             opts_sizing(rescale = TRUE, width = 0.75),
-                             opts_selection(type = "none")
+                             opts_sizing(rescale = TRUE, width = 1),
+                             opts_selection(type = "single",
+                                            only_shiny = FALSE,
+                                            css = ""),
+                             opts_tooltip(delay_mouseover = 0,
+                                          delay_mouseout  = 5000)
                            ))
   
   p1_interactive_shiny <- girafe(ggobj = p1,
                                  options = list(
-                                   opts_hover(css = ""), 
-                                   # opts_hover_inv(css = "fill: gray"),
+                                   opts_hover(css = "fill:#D8BFD8"),
+                                   opts_hover_inv(css = ""),
                                    opts_toolbar(saveaspng = FALSE),
                                    opts_sizing(rescale = TRUE, width = 1),
-                                   opts_selection(type = "none")
+                                   opts_selection(type = "single",
+                                                  only_shiny = FALSE,
+                                                  css = ""),
+                                   opts_tooltip(delay_mouseover = 0,
+                                                delay_mouseout  = 5000)
                                  ))
   
   ### 3. Speichern
@@ -273,3 +287,10 @@ for(year_search in unique(df$year)) {
   )
   
 }
+
+
+# Dummy-Datei für 2021 ----------------------------------------------------
+# Für das Jahr 2021 sind keine Daten verfügbar.
+write_rds(tibble(),
+          "04_Femizide_CH_SHINY/01_Data/Femizide_Schweiz_DUMMY.rds")
+

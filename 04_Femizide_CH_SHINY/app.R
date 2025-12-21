@@ -12,6 +12,7 @@ year_files <- c(
   "2024" = "01_Data/Femizide_Schweiz_2024.rds",
   "2023" = "01_Data/Femizide_Schweiz_2023.rds",
   "2022" = "01_Data/Femizide_Schweiz_2022.rds",
+  "2021"    = "01_Data/Femizide_Schweiz_DUMMY.rds", 
   "2020" = "01_Data/Femizide_Schweiz_2020.rds"
 )
 plots_by_year <- map(year_files, ~ read_rds(.x))
@@ -61,11 +62,10 @@ ui <- fluidPage(
       `aria-label` = "Close",
       tags$span(`aria-hidden` = "true", HTML("&times;"))
     ),
-    strong("Hinweis zum Gebrauch mit dem Smartphone:"),   
+    strong("Hinweis zum Gebrauch mit Smartphones/Tablets:"),   
     HTML("<br>
         - Bitte Querformat verwenden.<br>
-        - Damit die zusätzlichen Informationen auf Kantonsebene sichtbar werden, etwas länger auf den Kanton drücken.
-    ")
+        - <i>Hover-Effekt</i> ist nur <i>eingeschränkt</i> verfügbar. Damit die zusätzlichen Informationen auf Kantonsebene sichtbar werden auf den entsprechenden Kanton drücken (Workaround: Anzeigedauer pro Tap beträgt 5 Sekunden).")
   ),
   
   titlePanel(
@@ -79,14 +79,27 @@ ui <- fluidPage(
   do.call(
     tabsetPanel,
     c(list(id = "year_tab"),
+      
       lapply(names(plots_by_year), function(y) {
         tabPanel(
           title = y,
-          girafeOutput(
-            outputId = paste0("plot_", y),
-            width    = "75%",
-            height   = "calc(100vw * 0.5)"
-          )
+          
+          # No data for 2021
+          if (y == "2021") {
+            tags$div(
+              class = "alert alert-danger",
+              style = "margin-top: 20px;",
+              tags$strong("Hinweis: "),
+              "Für das Jahr 2021 liegen keine Daten vor."
+            )
+            # Ohter years
+          } else {
+            girafeOutput(
+              outputId = paste0("plot_", y),
+              width    = "75%",
+              height   = "calc(100vw * 0.5)"
+            )
+          }
         )
       }),
       
