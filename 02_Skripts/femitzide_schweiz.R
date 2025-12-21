@@ -4,6 +4,7 @@ library(ggiraph)
 library(sf)
 library(maps)
 library(htmlwidgets)
+library(shinyWidgets)
 
 `%ni%` <- negate(`%in%`)
 
@@ -161,10 +162,7 @@ p1_interactive <- girafe(ggobj = p1,
                            opts_sizing(rescale = TRUE, width = 1),
                            opts_selection(type = "single",
                                           only_shiny = TRUE,
-                                          css = ""),
-                           opts_tooltip(delay_mouseover = 0,
-                                        delay_mouseout  = 5000,
-                                        use_cursor_pos  = TRUE)
+                                          css = "")
                          ))
 
 p1_interactive_shiny <- girafe(ggobj = p1,
@@ -175,10 +173,7 @@ p1_interactive_shiny <- girafe(ggobj = p1,
                                  opts_sizing(rescale = TRUE, width = 1),
                                  opts_selection(type = "single",
                                                 only_shiny = TRUE,
-                                                css = ""),
-                                 opts_tooltip(delay_mouseover = 0,
-                                              delay_mouseout  = 5000,
-                                              use_cursor_pos  = TRUE)
+                                                css = "")
                                ))
 
 ### 3. Speichern
@@ -258,10 +253,7 @@ for(year_search in unique(df$year)) {
                              opts_sizing(rescale = TRUE, width = 1),
                              opts_selection(type = "single",
                                             only_shiny = TRUE,
-                                            css = ""),
-                             opts_tooltip(delay_mouseover = 0,
-                                          delay_mouseout  = 5000,
-                                          use_cursor_pos  = TRUE)
+                                            css = "")
                            ))
   
   p1_interactive_shiny <- girafe(ggobj = p1,
@@ -272,10 +264,7 @@ for(year_search in unique(df$year)) {
                                    opts_sizing(rescale = TRUE, width = 1),
                                    opts_selection(type = "single",
                                                   only_shiny = TRUE,
-                                                  css = ""),
-                                   opts_tooltip(delay_mouseover = 0,
-                                                delay_mouseout  = 5000,
-                                                use_cursor_pos  = TRUE)
+                                                  css = "")
                                  ))
   
   ### 3. Speichern

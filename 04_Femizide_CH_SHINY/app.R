@@ -4,6 +4,7 @@ library(tidyverse)
 library(shiny)
 library(htmlwidgets)
 library(ggiraph)
+library(shinyWidgets)
 
 # Data
 year_files <- c(
@@ -65,14 +66,31 @@ ui <- fluidPage(
     strong("Hinweis zum Gebrauch mit Smartphones/Tablets:"),   
     HTML("<br>
         - Bitte Querformat verwenden.<br>
-        - <i>Hover-Effekt</i> ist nur <i>eingeschränkt</i> verfügbar. Damit die zusätzlichen Informationen auf Kantonsebene sichtbar werden auf den entsprechenden Kanton drücken (Workaround: Anzeigedauer pro Tap beträgt 5 Sekunden).")
+        - <i>Hover-Effekt</i> ist nur <i>eingeschränkt</i> verfügbar. Anzeigedauer pro Tap einstellen (Workaround).")
   ),
+  
+  hr(),
+  
+  prettyRadioButtons(
+    inputId = "mouseout_delay_s",
+    label   = strong("Anzeigedauer pro Tap:"),
+    choices = c("0s" = 0.25, 
+                "5s" = 5, 
+                "10s" = 10, 
+                "30s" = 30),
+    selected = 0.25,
+    inline = TRUE,
+    status = "danger",
+    shape = "curve",
+    animation = "pulse"
+  ),
+  hr(),
   
   titlePanel(
     strong(
       "(Versuchte) Femizide in der Schweiz")
   ), 
-  br(), br(),
+  br(),
   
   ### 2. Tabs
   # Maps
@@ -144,9 +162,21 @@ server <- function(input, output, session) {
     .x = names(plots_by_year),
     .y = plots_by_year,
     .f = function(y, plot_obj) {
+      
       output[[paste0("plot_", y)]] <- renderGirafe({
-        plot_obj
+        
+        # set delay_mouseout based on user input
+        delay_ms <- as.numeric(input$mouseout_delay_s) * 1000
+        ggiraph::girafe_options(
+          plot_obj,
+          ggiraph::opts_tooltip(delay_mouseover = 0,
+                                delay_mouseout  = delay_ms,
+                                opacity = 0.75,
+                                use_cursor_pos  = TRUE,
+                                placement = "container")
+        )
       })
+      
     }
   )
 }
