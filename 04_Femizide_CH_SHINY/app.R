@@ -65,7 +65,7 @@ ui <- fluidPage(
     strong("Hinweis zum Gebrauch mit Smartphones/Tablets:"),   
     HTML("<br>
         - Bitte Querformat verwenden.<br>
-        - <i>Hover-Effekt</i> ist nur <i>eingeschränkt</i> verfügbar. Damit die zusätzlichen Informationen auf Kantonsebene sichtbar werden auf den entsprechenden Kanton drücken (Workaround: Anzeigedauer pro Tap beträgt 5 Sekunden).")
+        - <i>Hover-Effekt</i> ist nur <i>eingeschränkt</i> verfügbar. Damit die zusätzlichen Informationen auf Kantonsebene sichtbar werden auf den entsprechenden Kanton drücken (Workaround: Anzeigedauer pro Tap beträgt 4 Sekunden).")
   ),
   
   titlePanel(

@@ -52,8 +52,10 @@ df <-  df %>%
                                       canton == "Waadt" ~ "Vaud",
                                       canton == "Genf" ~ "Genève",
                                       TRUE ~ canton)) %>% 
-  add_count(year, canton_shapefile,
-            name = "n_femizid") %>% 
+  group_by(year, canton) %>% 
+  mutate(n_femizid = sum(category == "<u>Femizid</u>"),
+         n_versuchter_femizid = sum(category == "Versuchter Femizid")) %>% 
+  ungroup() %>% 
   select(rowid, 
          year,
          date,
@@ -62,7 +64,8 @@ df <-  df %>%
          canton_shapefile,
          community,
          info, 
-         n_femizid)
+         n_femizid,
+         n_versuchter_femizid)
 
 ### Info für Tooltipp erstellen
 df <- df %>% 
@@ -74,7 +77,7 @@ df <- df %>%
                                collapse = "<br>")) %>% 
   ungroup() %>% 
   mutate(info_tooltipp = paste0("<b>", canton_shapefile, "</b>", "<br>",
-                                "Anzahl (versuchte) Feminzide: ", n_femizid, "<br><br>",
+                                "<u>Femizide</u>: ", n_femizid, " | Versuchte Femizide: ", n_versuchter_femizid, "<br><br>",
                                 info_tooltipp)) %>% 
   mutate(info_tooltipp = str_remove_all(info_tooltipp,
                                         "NA"))
@@ -90,16 +93,16 @@ df_shiny <- df %>%
   distinct() %>% 
   pivot_wider(names_from = category,
               values_from = n_femizid) %>% 
-  mutate(Femizid = if_else(is.na(Femizid), 0, Femizid),
+  mutate(`<u>Femizid</u>` = if_else(is.na(`<u>Femizid</u>`), 0, `<u>Femizid</u>`),
          `Versuchter Femizid` = if_else(is.na(`Versuchter Femizid`), 0, `Versuchter Femizid`)) %>% 
   mutate(info_tooltipp = paste0("<b>", canton_shapefile, "</b>", "<br>",
-                                "Anzahl Feminzide: ", Femizid, "<br>",
+                                "Anzahl Feminzide: ", `<u>Femizid</u>`, "<br>",
                                 "Anzahl versuchte Femizide: ", `Versuchter Femizid`)) %>% 
   mutate(info_tooltipp = str_remove_all(info_tooltipp,
                                         "NA")) %>%
-  mutate(n_femizid = Femizid + `Versuchter Femizid`) %>% 
+  mutate(n_femizid = `<u>Femizid</u>` + `Versuchter Femizid`) %>% 
   ungroup() %>% 
-  select(canton_shapefile, info_tooltipp, Femizid, `Versuchter Femizid`, n_femizid) %>% 
+  select(canton_shapefile, info_tooltipp, `<u>Femizid</u>`, `Versuchter Femizid`, n_femizid) %>% 
   distinct()
 
 # Fehlende Kantone hinzufügen
@@ -116,7 +119,7 @@ for(canton in missing_cantons) {
 
 # Total pro Kategorie berechnen
 n_total <- df_shiny %>% 
-  summarise(total_fem = sum(Femizid, na.rm = TRUE),
+  summarise(total_fem = sum(`<u>Femizid</u>`, na.rm = TRUE),
             totl_v_fem = sum(`Versuchter Femizid`, na.rm = TRUE))
 
 # Roh-Grafik erstellen
@@ -160,7 +163,7 @@ p1_interactive <- girafe(ggobj = p1,
                                           only_shiny = FALSE,
                                           css = ""),
                            opts_tooltip(delay_mouseover = 0,
-                                        delay_mouseout  = 5000)
+                                        delay_mouseout  = 4000)
                          ))
 
 p1_interactive_shiny <- girafe(ggobj = p1,
@@ -173,7 +176,7 @@ p1_interactive_shiny <- girafe(ggobj = p1,
                                                 only_shiny = FALSE,
                                                 css = ""),
                                  opts_tooltip(delay_mouseover = 0,
-                                              delay_mouseout  = 5000)
+                                              delay_mouseout  = 4000)
                                ))
 
 ### 3. Speichern
@@ -255,7 +258,7 @@ for(year_search in unique(df$year)) {
                                             only_shiny = FALSE,
                                             css = ""),
                              opts_tooltip(delay_mouseover = 0,
-                                          delay_mouseout  = 5000)
+                                          delay_mouseout  = 4000)
                            ))
   
   p1_interactive_shiny <- girafe(ggobj = p1,
@@ -268,7 +271,7 @@ for(year_search in unique(df$year)) {
                                                   only_shiny = FALSE,
                                                   css = ""),
                                    opts_tooltip(delay_mouseover = 0,
-                                                delay_mouseout  = 5000)
+                                                delay_mouseout  = 4000)
                                  ))
   
   ### 3. Speichern
