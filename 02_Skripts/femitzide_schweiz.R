@@ -144,11 +144,11 @@ p1 <- shape_agg %>%
           fill = "#add8e6", 
           colour = NA) + 
   labs(title = paste0("Overall - Anzahl Femizide: ", n_total$total_fem,  " | Anzahl Versuchte Femizide: ", n_total$totl_v_fem),
-       caption = "stopfemizid versucht, jede Tat zu dokumentieren. Dennoch sind die dargestellten Informationen als unvollständig zu betrachten.") +
+       caption = "stopfemizid versucht jede Tat zu dokumentieren. Dennoch sind die dargestellten Informationen als unvollständig zu betrachten (Stand: 9. November 2025).") +
   theme_void() +
   theme(
     plot.caption = element_text(
-      size = 5,
+      size = 6,
       face = "italic",
       hjust = 1)
   )
@@ -170,10 +170,7 @@ p1_interactive_shiny <- girafe(ggobj = p1,
                                  opts_hover(css = "fill:#D8BFD8"),
                                  opts_hover_inv(css = ""),
                                  opts_toolbar(saveaspng = FALSE),
-                                 opts_sizing(rescale = TRUE, width = 1),
-                                 opts_selection(type = "single",
-                                                only_shiny = TRUE,
-                                                css = "")
+                                 opts_sizing(rescale = TRUE, width = 1)
                                ))
 
 ### 3. Speichern
@@ -235,11 +232,11 @@ for(year_search in unique(df$year)) {
             fill = "#add8e6", 
             colour = NA) + 
     labs(title = paste0(year_search, " - Anzahl Femizide: ", n_total[[1, 2]],  " | Anzahl Versuchte Femizide: ", n_total[[2, 2]]),
-         caption = "stopfemizid versucht, jede Tat zu dokumentieren. Dennoch sind die dargestellten Informationen als unvollständig zu betrachten.") +
+         caption = "stopfemizid versucht jede Tat zu dokumentieren. Dennoch sind die dargestellten Informationen als unvollständig zu betrachten (Stand: 9. November 2025).") +
     theme_void() +
     theme(
       plot.caption = element_text(
-        size = 5,
+        size = 6,
         face = "italic",
         hjust = 1)
     )
@@ -261,10 +258,7 @@ for(year_search in unique(df$year)) {
                                    opts_hover(css = "fill:#D8BFD8"),
                                    opts_hover_inv(css = ""),
                                    opts_toolbar(saveaspng = FALSE),
-                                   opts_sizing(rescale = TRUE, width = 1),
-                                   opts_selection(type = "single",
-                                                  only_shiny = TRUE,
-                                                  css = "")
+                                   opts_sizing(rescale = TRUE, width = 1)
                                  ))
   
   ### 3. Speichern

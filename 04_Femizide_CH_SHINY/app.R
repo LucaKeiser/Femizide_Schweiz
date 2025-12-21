@@ -105,7 +105,7 @@ ui <- fluidPage(
           # No data for 2021
           if (y == "2021") {
             tags$div(
-              class = "alert alert-danger",
+              class = "alert alert-warning",
               style = "margin-top: 20px;",
               tags$strong("Hinweis: "),
               "Für das Jahr 2021 liegen keine Daten vor."
@@ -114,7 +114,7 @@ ui <- fluidPage(
           } else {
             girafeOutput(
               outputId = paste0("plot_", y),
-              width    = "75%",
+              width    = "70%",
               height   = "calc(100vw * 0.5)"
             )
           }
@@ -136,6 +136,16 @@ ui <- fluidPage(
                 tags$a(href = "https://www.stopfemizid.ch/",
                        "stopfemizid")
               ),
+              tags$i("\"Femizide sind keine Einzelfälle, sondern Resultat von struktureller Gewalt,
+                     deren Ausgangspunkt in den patriarchalen Machtverhältnissen unserer Gesellschaft 
+                     liegt. Gewalt gegen Frauen wird noch oft als Privatsache behandelt, was sich am 
+                     gesellschaftlichen Umgang damit ablesen lässt: Der Begriff Femizid ist in der 
+                     Schweiz noch immer kein etablierter politischer Begriff. Um Gewalt gegen Frauen 
+                     möglichst umfassend zu dokumentieren, zählen wir nicht nur Femizide in Folge 
+                     häuslicher Gewalt, sondern auch die Femizide, in denen die Täter keine Beziehung 
+                     zu den Opfern hatten, Fälle von rassistischen, homo-, transphoben und 
+                     behindertenfeindlichen Motiven, und solche an Sexarbeiterinnen. Wir versuchen, 
+                     jede Tat zu dokumentieren. Wir wissen: Die Liste ist unvollständig.\" - stopfemizid.ch"),
               tags$hr(),
               tags$p(
                 class = "impressum-text",
@@ -158,6 +168,7 @@ ui <- fluidPage(
 
 # Server logic ------------------------------------------------------------
 server <- function(input, output, session) {
+  
   walk2(
     .x = names(plots_by_year),
     .y = plots_by_year,
@@ -167,13 +178,16 @@ server <- function(input, output, session) {
         
         # set delay_mouseout based on user input
         delay_ms <- as.numeric(input$mouseout_delay_s) * 1000
-        ggiraph::girafe_options(
+        girafe_options(
           plot_obj,
-          ggiraph::opts_tooltip(delay_mouseover = 0,
-                                delay_mouseout  = delay_ms,
-                                opacity = 0.75,
-                                use_cursor_pos  = TRUE,
-                                placement = "container")
+          opts_tooltip(delay_mouseover = 0,
+                       delay_mouseout  = delay_ms,
+                       opacity = 0.75,
+                       use_cursor_pos  = TRUE,
+                       placement = "container"),
+          opts_selection(type = "single",
+                         only_shiny = TRUE,
+                         css = "")
         )
       })
       
