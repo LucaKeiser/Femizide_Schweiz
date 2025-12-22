@@ -56,6 +56,20 @@ df <-  df %>%
   group_by(year, canton) %>% 
   mutate(n_femizid = sum(category == "<u>Femizid</u>"),
          n_versuchter_femizid = sum(category == "Versuchter Femizid")) %>% 
+  
+  # Es kann mehr als 1 Femizid pro Eintrag vorkommen:
+  mutate(n_femizid = if_else(str_detect(info, "Frauen|Tochter") & category == "<u>Femizid</u>",
+                             n_femizid + 1,
+                             n_femizid),
+         n_femizid = if_else(str_detect(info, "Töchter") & category == "<u>Femizid</u>",
+                             n_femizid + 2,
+                             n_femizid),
+         n_versuchter_femizid = if_else(str_detect(info, "Frauen|Tochter") & category == "Versuchter Femizid",
+                                        n_versuchter_femizid + 1,
+                                        n_versuchter_femizid),
+         n_femizid = max(n_femizid),
+         n_versuchter_femizid = max(n_versuchter_femizid)) %>%
+  
   ungroup() %>% 
   select(rowid, 
          year,
@@ -88,22 +102,20 @@ df <- df %>%
 ## Overall ----------------------------------------------------------------
 ### 1. Daten aufbereiten
 df_shiny <- df %>% 
-  select(canton_shapefile, n_femizid, category) %>% 
-  add_count(canton_shapefile, category,
-            name = "n_femizid") %>% 
+  select(year, canton_shapefile, n_femizid, n_versuchter_femizid) %>% 
   distinct() %>% 
-  pivot_wider(names_from = category,
-              values_from = n_femizid) %>% 
-  mutate(`<u>Femizid</u>` = if_else(is.na(`<u>Femizid</u>`), 0, `<u>Femizid</u>`),
-         `Versuchter Femizid` = if_else(is.na(`Versuchter Femizid`), 0, `Versuchter Femizid`)) %>% 
+  group_by(canton_shapefile) %>% 
+  mutate(n_femizid = sum(n_femizid),
+         n_versuchter_femizid = sum(n_versuchter_femizid)) %>% 
+  select(-year) %>% 
+  distinct() %>%
   mutate(info_tooltipp = paste0("<b>", canton_shapefile, "</b>", "<br>",
-                                "Anzahl Feminzide: ", `<u>Femizid</u>`, "<br>",
-                                "Anzahl versuchte Femizide: ", `Versuchter Femizid`)) %>% 
+                                "Anzahl Feminzide: ", n_femizid, "<br>",
+                                "Anzahl versuchte Femizide: ", n_versuchter_femizid)) %>% 
   mutate(info_tooltipp = str_remove_all(info_tooltipp,
                                         "NA")) %>%
-  mutate(n_femizid = `<u>Femizid</u>` + `Versuchter Femizid`) %>% 
   ungroup() %>% 
-  select(canton_shapefile, info_tooltipp, `<u>Femizid</u>`, `Versuchter Femizid`, n_femizid) %>% 
+  select(canton_shapefile, info_tooltipp, n_femizid, n_versuchter_femizid) %>% 
   distinct()
 
 # Fehlende Kantone hinzufügen
@@ -120,8 +132,8 @@ for(canton in missing_cantons) {
 
 # Total pro Kategorie berechnen
 n_total <- df_shiny %>% 
-  summarise(total_fem = sum(`<u>Femizid</u>`, na.rm = TRUE),
-            totl_v_fem = sum(`Versuchter Femizid`, na.rm = TRUE))
+  summarise(total_fem = sum(n_femizid , na.rm = TRUE),
+            totl_v_fem = sum(n_versuchter_femizid, na.rm = TRUE))
 
 # Roh-Grafik erstellen
 p1 <- shape_agg %>% 
@@ -206,10 +218,10 @@ for(year_search in unique(df$year)) {
   
   # Total pro Kategorie berechnen
   n_total <- df_shiny %>% 
-    count(n_femizid, category) %>% 
-    filter(!is.na(n_femizid)) %>% 
-    group_by(category) %>% 
-    summarise(total = sum(n))
+    select(canton_shapefile, n_femizid, n_versuchter_femizid) %>% 
+    distinct() %>% 
+    summarise(n_femizid = sum(n_femizid, na.rm = TRUE),
+              n_versuchter_femizid = sum(n_versuchter_femizid, na.rm = TRUE))
   
   # Roh-Grafik erstellen
   p1 <- shape_agg %>% 
@@ -231,7 +243,7 @@ for(year_search in unique(df$year)) {
     geom_sf(data = swiss_lakes,
             fill = "#add8e6", 
             colour = NA) + 
-    labs(title = paste0(year_search, " - Anzahl Femizide: ", n_total[[1, 2]],  " | Anzahl Versuchte Femizide: ", n_total[[2, 2]]),
+    labs(title = paste0(year_search, " - Anzahl Femizide: ", n_total[[1, 1]],  " | Anzahl Versuchte Femizide: ", n_total[[1, 2]]),
          caption = "stopfemizid versucht jede Tat zu dokumentieren. Dennoch sind die dargestellten Informationen als unvollständig zu betrachten (Stand: 9. November 2025).") +
     theme_void() +
     theme(

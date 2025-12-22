@@ -5,7 +5,7 @@ account: lucakeiser
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 16321528
-bundleId: 11354242
+bundleId: 11354413
 url: https://lucakeiser.shinyapps.io/Femizide_Schweiz/
 version: 1
 asMultiple: FALSE
