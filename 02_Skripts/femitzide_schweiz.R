@@ -44,14 +44,15 @@ sf::st_crs(swiss_lakes) <- sf::st_crs(swiss_lakes, 2056)
 df <-  df %>% 
   mutate(year = year(date),
          year = as.numeric(year)) %>% 
-  mutate(canton_shapefile = case_when(canton == "Wallis" ~ "Valais",
-                                      canton == "Tessin" ~ "Ticino",
+  mutate(canton_shapefile = case_when(canton == "Basel" ~ "Basel-Stadt",
                                       canton == "Biel" ~ "Bern",
                                       canton == "Freiburg" ~ "Fribourg",
+                                      canton == "Genf" ~ "Genève",
                                       canton == "Neuenburg" ~ "Neuchâtel",
                                       canton == "Sankt Gallen" ~ "St. Gallen",
+                                      canton == "Tessin" ~ "Ticino",
                                       canton == "Waadt" ~ "Vaud",
-                                      canton == "Genf" ~ "Genève",
+                                      canton == "Wallis" ~ "Valais",
                                       TRUE ~ canton)) %>% 
   group_by(year, canton) %>% 
   mutate(n_femizid = sum(category == "<u>Femizid</u>"),
@@ -156,7 +157,7 @@ p1 <- shape_agg %>%
           fill = "#add8e6", 
           colour = NA) + 
   labs(title = paste0("Overall - Anzahl Femizide: ", n_total$total_fem,  " | Anzahl Versuchte Femizide: ", n_total$totl_v_fem),
-       caption = "stopfemizid versucht jede Tat zu dokumentieren. Dennoch sind die dargestellten Informationen als unvollständig zu betrachten (Stand: 9. November 2025).") +
+       caption = "stopfemizid versucht jede Tat zu dokumentieren. Dennoch sind die dargestellten Informationen als unvollständig zu betrachten.") +
   theme_void() +
   theme(
     plot.caption = element_text(
@@ -166,17 +167,6 @@ p1 <- shape_agg %>%
   )
 
 ### 2. interaktive Karte erstellen
-p1_interactive <- girafe(ggobj = p1,
-                         options = list(
-                           opts_hover(css = "fill:#D8BFD8"),
-                           opts_hover_inv(css = ""),
-                           opts_toolbar(saveaspng = FALSE),
-                           opts_sizing(rescale = TRUE, width = 1),
-                           opts_selection(type = "single",
-                                          only_shiny = TRUE,
-                                          css = "")
-                         ))
-
 p1_interactive_shiny <- girafe(ggobj = p1,
                                options = list(
                                  opts_hover(css = "fill:#D8BFD8"),
@@ -186,11 +176,8 @@ p1_interactive_shiny <- girafe(ggobj = p1,
                                ))
 
 ### 3. Speichern
-htmlwidgets::saveWidget(p1_interactive, 
-                        paste0("03_Output/Femizide_Schweiz_Overall.html"),
-                        selfcontained = TRUE)
 write_rds(p1_interactive_shiny,
-          paste0("04_Femizide_CH_SHINY/01_Data/Femizide_Schweiz_Overall.rds"))
+          paste0("03_Femizide_CH_SHINY/01_Data/Femizide_Schweiz_Overall.rds"))
 
 
 
@@ -244,7 +231,7 @@ for(year_search in unique(df$year)) {
             fill = "#add8e6", 
             colour = NA) + 
     labs(title = paste0(year_search, " - Anzahl Femizide: ", n_total[[1, 1]],  " | Anzahl Versuchte Femizide: ", n_total[[1, 2]]),
-         caption = "stopfemizid versucht jede Tat zu dokumentieren. Dennoch sind die dargestellten Informationen als unvollständig zu betrachten (Stand: 9. November 2025).") +
+         caption = "stopfemizid versucht jede Tat zu dokumentieren. Dennoch sind die dargestellten Informationen als unvollständig zu betrachten.") +
     theme_void() +
     theme(
       plot.caption = element_text(
@@ -254,17 +241,6 @@ for(year_search in unique(df$year)) {
     )
   
   ### 2. interaktive Karte erstellen
-  p1_interactive <- girafe(ggobj = p1,
-                           options = list(
-                             opts_hover(css = "fill:#D8BFD8"),
-                             opts_hover_inv(css = ""),
-                             opts_toolbar(saveaspng = FALSE),
-                             opts_sizing(rescale = TRUE, width = 1),
-                             opts_selection(type = "single",
-                                            only_shiny = TRUE,
-                                            css = "")
-                           ))
-  
   p1_interactive_shiny <- girafe(ggobj = p1,
                                  options = list(
                                    opts_hover(css = "fill:#D8BFD8"),
@@ -274,16 +250,9 @@ for(year_search in unique(df$year)) {
                                  ))
   
   ### 3. Speichern
-  htmlwidgets::saveWidget(p1_interactive, 
-                          paste0(
-                            "03_Output/Femizide_Schweiz_", 
-                            year_search, 
-                            ".html"
-                          ),
-                          selfcontained = TRUE)
   write_rds(p1_interactive_shiny,
             paste0(
-              "04_Femizide_CH_SHINY/01_Data/Femizide_Schweiz_", 
+              "03_Femizide_CH_SHINY/01_Data/Femizide_Schweiz_", 
               year_search, 
               ".rds")
   )
@@ -294,4 +263,4 @@ for(year_search in unique(df$year)) {
 # Dummy-Datei für 2021 ----------------------------------------------------
 # Für das Jahr 2021 sind keine Daten verfügbar.
 write_rds(tibble(),
-          "04_Femizide_CH_SHINY/01_Data/Femizide_Schweiz_DUMMY.rds")
+          "03_Femizide_CH_SHINY/01_Data/Femizide_Schweiz_DUMMY.rds")
