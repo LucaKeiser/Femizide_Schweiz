@@ -128,17 +128,18 @@ p1 <- shape_agg %>%
   left_join(df_shiny,
             by = c("NAME" = "canton_shapefile")) %>% 
   distinct() %>% 
+  mutate(n_tot = n_femizid + n_versuchter_femizid) %>% 
   ggplot() +
   geom_sf_interactive(aes(tooltip = info_tooltipp, 
                           data_id = id_interactive_plot,
-                          fill = n_femizid),
+                          fill = n_tot),
                       colour = "#ffffff",
                       show.legend = FALSE,
                       size = 0.05) + 
   scale_fill_gradient2(low = "#eba4a4",
                        mid = "#ec5353",
                        high =  "#d12e2e",
-                       midpoint = 12,
+                       midpoint = 16,
                        na.value = "#eedada") + 
   geom_sf(data = swiss_lakes,
           fill = "#add8e6", 
@@ -202,8 +203,9 @@ for(year_search in unique(df$year)) {
     left_join(df_shiny,
               by = c("NAME" = "canton_shapefile")) %>% 
     distinct() %>% 
+    mutate(n_tot = n_femizid + n_versuchter_femizid) %>% 
     ggplot() +
-    geom_sf_interactive(aes(fill = n_femizid,
+    geom_sf_interactive(aes(fill = n_tot,
                             tooltip = info_tooltipp, 
                             data_id = id_interactive_plot),
                         colour = "#ffffff",
