@@ -41,7 +41,7 @@ swiss_lakes <- ggswissmaps::shp_sf$g1s15
 sf::st_crs(swiss_lakes) <- sf::st_crs(swiss_lakes, 2056)
 
 ### Daten aufbereiten
-df <-  df %>% 
+df <- df %>% 
   mutate(year = year(date),
          year = as.numeric(year)) %>% 
   mutate(canton_shapefile = case_when(canton == "Basel" ~ "Basel-Stadt",
@@ -54,32 +54,18 @@ df <-  df %>%
                                       canton == "Waadt" ~ "Vaud",
                                       canton == "Wallis" ~ "Valais",
                                       TRUE ~ canton)) %>% 
-  group_by(year, canton) %>% 
-  mutate(n_femizid = sum(category == "<u>Femizid</u>"),
-         n_versuchter_femizid = sum(category == "Versuchter Femizid")) %>% 
-  
-  # Es kann mehr als 1 Femizid pro Eintrag vorkommen:
-  mutate(n_femizid = if_else(str_detect(info, "Frauen|Tochter") & category == "<u>Femizid</u>",
-                             n_femizid + 1,
-                             n_femizid),
-         n_femizid = if_else(str_detect(info, "Töchter") & category == "<u>Femizid</u>",
-                             n_femizid + 2,
-                             n_femizid),
-         n_versuchter_femizid = if_else(str_detect(info, "Frauen|Tochter") & category == "Versuchter Femizid",
-                                        n_versuchter_femizid + 1,
-                                        n_versuchter_femizid),
-         n_femizid = max(n_femizid),
-         n_versuchter_femizid = max(n_versuchter_femizid)) %>%
-  
-  ungroup() %>% 
+  group_by(year, canton_shapefile, category) %>% 
+  mutate(n_femizid = if_else(category == "<u>Femizid</u>", sum(factor), 0),
+         n_versuchter_femizid = if_else(category == "Versuchter Femizid", sum(factor), 0)) %>%
   select(rowid, 
          year,
          date,
          category, 
+         factor,
          canton, 
          canton_shapefile,
          community,
-         info, 
+         info,
          n_femizid,
          n_versuchter_femizid)
 
@@ -91,10 +77,11 @@ df <- df %>%
   group_by(year, canton_shapefile) %>%
   mutate(info_tooltipp = str_c(info_tooltipp, 
                                collapse = "<br>")) %>% 
-  ungroup() %>% 
+  group_by(year, canton_shapefile) %>% 
   mutate(info_tooltipp = paste0("<b>", canton_shapefile, "</b>", "<br>",
-                                "<u>Femizide</u>: ", n_femizid, " | Versuchte Femizide: ", n_versuchter_femizid, "<br><br>",
+                                "<u>Femizide</u>: ", max(n_femizid), " | Versuchte Femizide: ", max(n_versuchter_femizid), "<br><br>",
                                 info_tooltipp)) %>% 
+  ungroup() %>% 
   mutate(info_tooltipp = str_remove_all(info_tooltipp,
                                         "NA"))
 
